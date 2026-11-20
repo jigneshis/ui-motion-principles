@@ -1,6 +1,15 @@
 ---
 name: ui-motion-principles
 description: Audit and improve a website or app UI using classic animation principles and UX laws, then apply the fixes after the user approves. Use this skill whenever the user asks to review, audit, polish or improve a UI, make an interface feel smoother or more premium, add or fix animations, transitions, micro-interactions, hover or press states, modals, drawers, toasts, loading states, or evaluate navigation, buttons, forms and CTAs for click targets, number of choices, emphasis or response speed (Fitts's law, Hick's law, Doherty threshold, Von Restorff effect, peak-end rule). Also use it when the user says "ui-motion-principles", "UI Motion Principles", or asks to check their site's UI/UX. Trigger even if the user never names a principle.
+license: MIT
+compatibility: [claude-code, gemini-cli, cursor, codex, antigravity, windsurf, amp, cline]
+metadata:
+  version: "1.0.0"
+  author: "jigneshis"
+  homepage: "https://skills.sh/jigneshis/ui-motion-principles/ui-motion-principles"
+  repository: "https://github.com/jigneshis/ui-motion-principles"
+  categories: ["ui", "design", "animation", "ux", "frontend"]
+  tags: ["ui-motion", "framer-motion", "css-transitions", "micro-interactions", "ux-laws", "doherty-threshold", "fitts-law", "peak-end-rule", "von-restorff", "staggering", "anticipation"]
 ---
 
 # UI Motion Principles

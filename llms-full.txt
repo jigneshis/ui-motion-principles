@@ -1,0 +1,179 @@
+# UI Motion Principles — Complete Specification & Reference Corpus
+
+Repository: https://github.com/jigneshis/ui-motion-principles
+Registry: https://skills.sh/jigneshis/ui-motion-principles/ui-motion-principles
+License: MIT
+Author: jigneshis
+
+================================================================================
+PART 1: AGENT SKILL SPECIFICATION (SKILL.md)
+================================================================================
+
+name: ui-motion-principles
+description: Audit and improve a website or app UI using classic animation principles and UX laws, then apply the fixes after the user approves. Use this skill whenever the user asks to review, audit, polish or improve a UI, make an interface feel smoother or more premium, add or fix animations, transitions, micro-interactions, hover or press states, modals, drawers, toasts, loading states, or evaluate navigation, buttons, forms and CTAs for click targets, number of choices, emphasis or response speed (Fitts's law, Hick's law, Doherty threshold, Von Restorff effect, peak-end rule). Also use it when the user says "ui-motion-principles", "UI Motion Principles", or asks to check their site's UI/UX. Trigger even if the user never names a principle.
+
+20 principles that separate interfaces that merely work from interfaces that feel intentional: 13 animation principles adapted from classic animation, and 6 UX laws about how people perceive and decide (plus frequency of use, which governs both).
+
+The goal is not more animation. It is making every motion and layout decision defensible. Motion should explain what happened (where something came from, what changed). UX laws decide size, placement, count and emphasis. If a principle doesn't improve clarity or feel for the element at hand, skip it.
+
+## Workflow: audit, announce, approve, apply
+
+Follow these four phases in order. The approval gate exists because changing a live codebase's look and feel is hard to undo and highly subjective; the user should see exactly what will change and where before any file is edited.
+
+### 1. Audit
+Look at the UI before judging it.
+- Code first. Find the project's UI source (components, styles, Tailwind config, animation code). Read the actual components for the screens the user cares about. If the user didn't say which screens, start with the main entry flow (landing page, dashboard, primary CTA path) and say that you chose it.
+- Live URL if available. If the user gave a URL and you have a browser tool, open it and look at real behavior (hover states, transitions, load feel). If you have no browser tool, say so in one line and continue with code only. Never claim to have seen a page you didn't open.
+- Read references/motion.md for anything that moves or changes state, and references/ux-laws.md for layout, choices, speed and emphasis. Pick the 3 to 5 principles that matter per element, not all 20.
+- Check frequency of use first for every animated element. It overrides the other motion principles.
+
+### 2. Announce the plan
+Present a numbered change list before touching anything. Each item must say:
+- Where: file and component (or screen and element)
+- Problem: what is wrong today, in plain words
+- Principle: which principle it violates
+- Change: the concrete fix with values (duration, easing, size, distance)
+
+Format each item like: `I will apply [principle] to [place]: [change].` Group by impact, highest first. Be blunt; vague advice like "make it smoother" is useless. Also list anything you looked at and decided to leave alone, with the reason, so the user knows it was considered.
+
+Keep the list to what is worth doing. A list of 40 trivial tweaks hides the 5 that matter.
+
+### 3. Wait for approval
+Stop after the plan and ask which items to apply (all, a subset, or changes to the plan). Do not edit files in this phase. If the user replies with something like "apply all" or "1, 3 and 5", proceed with exactly that.
+
+### 4. Apply
+Make the approved changes only. Keep the project's existing stack and conventions (if it uses Tailwind and Framer Motion, don't introduce another animation library). Add a short comment only where a principle drove a non-obvious choice, for example `// anticipation: 2px dip before the lift`. Then run the review checklist, and finish with a short summary: what changed, what was skipped, and anything the user should eyeball in a browser, since motion quality can't be fully judged from code.
+
+================================================================================
+PART 2: MOTION PRINCIPLES (references/motion.md)
+================================================================================
+
+Examples use CSS and Framer Motion (React) since those are the most common targets. The ideas carry over to any stack.
+
+## Origin awareness
+Elements should visually come from the thing that created them. A dropdown grows from its button, a popover from its anchor, a modal from the card that was clicked, a toast from the edge it docks to. This keeps the user's mental map intact.
+- Set transform-origin to the trigger's position (for a menu under a button: top left or the button's center).
+- Don't scale every popover from center by default; that is the most common giveaway of an unconsidered animation.
+- For shared-element transitions use Framer Motion layoutId or the View Transitions API.
+
+```css
+.menu { transform-origin: top left; animation: menu-in 160ms cubic-bezier(.2,.8,.2,1); }
+@keyframes menu-in { from { opacity: 0; transform: scale(.96); } }
+```
+
+## Anticipation
+A short preparatory movement before the main one. In UI it should be tiny and quick, otherwise it reads as lag.
+- Button press: scale to ~0.97 on :active before the action fires.
+- Drawer that is about to open: 2 to 4px nudge in the opposite direction.
+- Drag start: slight lift (scale 1.02 and a stronger shadow).
+Skip anticipation on high-frequency actions.
+
+## Squash and stretch
+Deformation conveys weight and elasticity. On screens this is subtle: a pressed button compresses, a bouncing element stretches along its motion axis.
+- Keep it under ~5 to 8% for functional UI; more for playful or brand moments.
+- Compress on one axis, expand slightly on the other so the element doesn't look like it is shrinking.
+
+## Slow in, slow out
+Objects accelerate and decelerate. Linear easing looks mechanical except for continuous loops (spinners, progress shimmer).
+- Entering: ease-out, e.g. cubic-bezier(0.2, 0.8, 0.2, 1) or cubic-bezier(0.16, 1, 0.3, 1).
+- Leaving: ease-in, e.g. cubic-bezier(0.4, 0, 1, 1).
+- On-screen movement: ease-in-out, e.g. cubic-bezier(0.4, 0, 0.2, 1).
+- The built-in CSS ease-in / ease-out curves are weak; custom curves feel noticeably better.
+
+## Arcs
+Natural motion curves. For small moves a straight line is fine. For larger moves (an item flying to a cart, a FAB expanding, a card moving across the screen) split x and y onto different easings or durations so the path bows.
+
+```js
+// Different easing on each axis produces a curved path
+<motion.div animate={{ x: 300, y: -120 }}
+  transition={{ x: { duration: .5, ease: "easeOut" }, y: { duration: .5, ease: "easeIn" } }} />
+```
+
+## Timing
+Duration communicates weight and distance. Bigger, heavier, or farther things take longer. Scale duration with distance travelled, within the ranges in SKILL.md. The same element should always use the same duration for the same kind of change, so the product feels consistent. Define duration tokens (`--dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 320ms`).
+
+## Exaggeration
+Push the key beat beyond realism so it is legible, then keep the rest restrained. Use for moments that deserve attention: success, an error shake, a first-time reward. The error shake is a good example: 3 to 4 oscillations of ~6 to 10px over ~300ms. Do not exaggerate routine interactions.
+
+## Follow through
+Things don't stop dead. After the main motion, loose parts overshoot slightly and settle. Springs do this naturally.
+
+```js
+transition={{ type: "spring", stiffness: 400, damping: 28 }}  // small overshoot, quick settle
+```
+Raise damping to reduce bounce for serious or dense interfaces. Lower it for playful ones.
+
+## Secondary action
+A supporting motion that reinforces the primary one without stealing focus: a checkmark that draws itself while the checkbox fills; an icon that rotates as a section expands; a counter that ticks as a card slides in. Rule: if you notice the secondary action before the primary one, tone it down.
+
+## Staggering
+When several items appear together, offset them 20 to 60ms each so the eye can follow. Cap the total (for example, stop staggering after ~8 items or keep total stagger under ~400ms) so long lists don't feel slow.
+
+```js
+<motion.ul variants={{ show: { transition: { staggerChildren: .04 } } }} initial="hidden" animate="show">
+```
+Stagger on entrance, usually not on exit.
+
+## Rubber banding
+At boundaries, resist rather than hard stop. Pull-to-refresh, overscroll, sliders and drag-to-dismiss sheets should move less than the finger once past the limit (a damping factor like 0.3 to 0.5) and spring back on release. In Framer Motion use dragElastic and dragConstraints. Hard clamps feel broken.
+
+## Interruptible motion
+Users change their mind mid-animation. Animations that run to completion before responding feel sluggish.
+- Prefer CSS transitions (they retarget smoothly from the current value) over keyframe animations for state toggles.
+- Prefer springs for gestures; they carry velocity into the new target.
+- Never block input during an animation unless it is truly unsafe.
+- Test: click a toggle rapidly 5 times. If it stutters or desyncs, fix it.
+
+## Solid drawing
+Elements should feel like consistent physical objects: one light source, consistent shadow direction and softness, elevation that matches importance (higher elevation means larger, softer shadow, and sits above in z-order), and consistent corner radii. A card that lifts on hover should gain a larger, softer shadow and move up, not just change color. Inconsistent shadows and radii are the usual reason a UI looks "off" without anyone knowing why.
+
+================================================================================
+PART 3: UX LAWS & CONFLICT RESOLUTION (references/ux-laws.md)
+================================================================================
+
+## Doherty threshold
+Productivity rises sharply when the system and user interact in under roughly 400ms. Slower than that and the interaction stops feeling like a conversation.
+- Acknowledge input immediately (within ~100ms): pressed state, spinner, skeleton, optimistic update.
+- If work takes longer than ~400ms, show progress, not a frozen screen. Skeleton screens and optimistic UI beat spinners for perceived speed.
+- Animations count against the budget. A 600ms transition before content appears makes the app feel slow even if the data was ready. Let content render while the transition plays, not after it.
+
+## Fitts's law
+Time to reach a target depends on distance and target size. Big and close is fast; small and far is slow.
+- Make primary actions large. On touch, aim for at least 44x44px (iOS) or 48x48px (Material) hit areas, even if the visible icon is smaller. Extend the hit area with padding.
+- Place related actions near where the pointer or thumb already is. Destructive actions go farther away from frequent ones.
+- Screen edges and corners are effectively infinite-size targets on desktop (the pointer stops there). Good for persistent navigation.
+- On mobile, keep primary actions within thumb reach (bottom of screen) rather than top corners.
+- Don't shrink spacing between adjacent targets so far that mis-taps happen.
+
+## Hick's law
+Decision time increases with the number and complexity of choices.
+- Cut options. Then group them. Then reveal progressively (accordions, "more" menus, steps).
+- Highlight a recommended default (pricing tables: mark one plan).
+- Break long forms into steps with one decision per screen when the stakes are high or the audience is new.
+- Don't take this to the extreme: hiding frequent actions behind menus hurts Fitts and frequency of use. Reduce choices, not capability.
+
+## Von Restorff effect
+The item that stands out from similar items is the one remembered and acted on.
+- One primary button per view, visually distinct (color, weight, size). If two things are loud, nothing is.
+- Use accent color sparingly so it keeps meaning. Highlight a recommended plan, a new feature, or a critical warning, not everything.
+- Contrast can come from color, size, shape, motion or spacing. Motion is the strongest; use it for one thing at a time.
+
+## Frequency of use
+The more often a user triggers something, the less decoration it should have. Repeated animation turns from delight into friction.
+- Many times a day (tab switch, hover, command palette, typing feedback, list row actions): no animation or under ~100ms, subtle.
+- A few times per session (opening a menu, a modal, toggling a setting): 150 to 250ms, simple ease.
+- Rarely or once (onboarding, first success, empty state, upgrade, completion): room for expressive motion, exaggeration, longer timing.
+This principle wins any conflict with the motion principles. Ask "how often does this happen?" before adding a flourish.
+
+## Peak-end rule
+People remember an experience mostly by its most intense moment and how it ended, not the average.
+- Identify the peak (the moment the product delivers its value: report generated, payment done, first video shared) and the end (checkout confirmation, task completion, logout, error recovery). Spend design and motion effort there.
+- Make errors and empty states graceful: a bad ending drags down the whole memory.
+- Don't spend the delight budget on the middle of the flow.
+
+## Resolving conflicts between principles
+- Frequency of use beats exaggeration and follow through.
+- Doherty threshold beats timing: if a nice animation pushes response past ~400ms, shorten it.
+- Hick's law vs Fitts's law: reduce the count of choices first, then make the remaining important ones big.
+- Von Restorff only works if there is a baseline of calm; reduce competing emphasis before adding more.
+- Accessibility (reduced motion, contrast, hit size) beats all aesthetic principles.

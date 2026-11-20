@@ -1,0 +1,28 @@
+name: Validate Skill & Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Core Skill Structure
+        run: |
+          test -f skills/ui-motion-principles/SKILL.md
+          test -f skills/ui-motion-principles/references/motion.md
+          test -f skills/ui-motion-principles/references/ux-laws.md
+          test -f llms.txt
+          test -f llms-full.txt
+          echo "All required skill files present."
+
+      - name: Validate SKILL.md Frontmatter
+        run: |
+          head -n 20 skills/ui-motion-principles/SKILL.md | grep -E '^name: ui-motion-principles'
+          head -n 20 skills/ui-motion-principles/SKILL.md | grep -E '^description:'
+          echo "Frontmatter metadata is valid."

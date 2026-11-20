@@ -1,0 +1,22 @@
+---
+description: Audit and improve UI animations, micro-interactions, layout choices, and responsiveness using 20 classic motion principles and UX laws.
+globs: **/*.{tsx,jsx,vue,svelte,css,scss,html,ts,js}
+alwaysApply: false
+---
+
+# UI Motion Principles for Cursor
+
+When asked to review, polish, or animate user interfaces:
+1. **Audit First**: Inspect code components, Tailwind classes, CSS transitions, and Framer Motion variants.
+2. **Announce Defensible Plan**: List concrete changes with values (e.g. `I will apply anticipation to SubmitButton: 0.97 scale on active press`).
+3. **Wait for Approval**: Never rewrite animation or layout code without the user's explicit OK.
+4. **Apply Cleanly**: Preserve existing libraries and conventions. Add inline comments explaining non-obvious choices.
+
+## Key Principles Quick Reference
+- **Origin awareness**: Match `transform-origin` to the trigger element's position.
+- **Anticipation**: Small preparatory motion before action fires (e.g., scale 0.97 on `:active`).
+- **Easing**: Custom `cubic-bezier(0.16, 1, 0.3, 1)` for entrances; avoid linear motion.
+- **Frequency of use**: High-frequency actions get <=100ms or no motion. Low-frequency get expressive motion.
+- **Doherty threshold**: Response within 100ms; keep full animation budget under 400ms.
+- **Fitts's law**: Touch targets >= 44x44px. Primary actions within natural thumb reach.
+- **Accessibility**: Always respect `@media (prefers-reduced-motion: reduce)`.

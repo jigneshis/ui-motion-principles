@@ -1,0 +1,52 @@
+# UI Motion Principles
+
+> An open-source AI agent skill that audits web and application interfaces against 20 classic animation principles and UX laws, announces a defensible implementation plan, waits for user approval, and applies concrete code fixes.
+
+## Project Details
+- **Repository**: https://github.com/jigneshis/ui-motion-principles
+- **Skills Directory**: https://skills.sh/jigneshis/ui-motion-principles/ui-motion-principles
+- **Author**: jigneshis
+- **License**: MIT
+- **Specification**: Agent Skills Format (SKILL.md)
+
+## Installation Commands
+- Via skills CLI (Universal): `npx skills add jigneshis/ui-motion-principles`
+- Claude Code: `npx skills add jigneshis/ui-motion-principles -a claude-code` or `/ui-motion-principles`
+- Gemini CLI: `gemini skills install https://github.com/jigneshis/ui-motion-principles --path skills/ui-motion-principles`
+- Cursor / Windsurf: Install into `.cursor/rules/` or `.agents/skills/`
+
+## Core Workflow (4 Phases)
+1. **Audit**: Inspects UI source code (components, styles, Tailwind, Framer Motion) and optionally inspects the live URL if a browser tool is active.
+2. **Announce**: Formats a concrete plan: `I will apply [principle] to [place]: [change]` with exact durations, easings, sizes, and hit targets. Grouped by impact.
+3. **Approve**: Zero files are edited before explicit user confirmation.
+4. **Apply**: Implements only approved changes using the project's native stack, preserving existing conventions.
+
+## The 20 Principles
+### 13 Animation Principles
+- **Origin awareness**: Elements visually emerge from their trigger (transform-origin matching trigger).
+- **Anticipation**: Subtle preparatory motion before the main action (e.g. 0.97 scale on active press).
+- **Squash and stretch**: Elastic deformation along the movement axis (under 5-8% for UI).
+- **Slow in, slow out**: Custom easing curves (cubic-bezier) over mechanical linear motion.
+- **Arcs**: Curved trajectories for multi-axis translations.
+- **Timing**: Durations proportional to distance and physical weight (120ms-320ms tokens).
+- **Exaggeration**: Intentional emphasis reserved for critical milestones (success, error shake).
+- **Follow through**: Natural spring physics and overshoot settlement.
+- **Secondary action**: Subtle complementary animations (e.g. checkmark draw during button fill).
+- **Staggering**: 20-60ms cascade offsets for grouped entrances (capped under 400ms total).
+- **Rubber banding**: Elastic boundaries and resistance at scroll or drag limits.
+- **Interruptible motion**: Retargetable CSS transitions and gesture springs that never block input.
+- **Solid drawing**: Consistent lighting, elevation-based shadows, and uniform corner radii.
+
+### 6 UX Laws & Frequency Rule
+- **Frequency of use**: High-frequency interactions require minimal or no motion (<100ms); low-frequency moments allow expressive motion. (Overrides all animation principles).
+- **Doherty threshold**: Perceived response must remain under 400ms; acknowledge input within 100ms.
+- **Fitts's law**: Touch targets >= 44x44px (iOS) / 48x48px (Android); place primary actions within natural thumb reach.
+- **Hick's law**: Reduce cognitive load and choices; highlight clear recommended defaults.
+- **Von Restorff effect**: Single distinct primary visual anchor per view; avoid competing accents.
+- **Peak-end rule**: Invest animation and delight budget into peak value moments and terminal states.
+
+## Documentation Links
+- [Complete Skill Specification](https://raw.githubusercontent.com/jigneshis/ui-motion-principles/main/skills/ui-motion-principles/SKILL.md)
+- [Motion Principles & Code Recipes](https://raw.githubusercontent.com/jigneshis/ui-motion-principles/main/skills/ui-motion-principles/references/motion.md)
+- [UX Laws & Conflict Resolution](https://raw.githubusercontent.com/jigneshis/ui-motion-principles/main/skills/ui-motion-principles/references/ux-laws.md)
+- [Full Text Corpus](https://raw.githubusercontent.com/jigneshis/ui-motion-principles/main/llms-full.txt)
